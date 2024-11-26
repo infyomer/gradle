@@ -16,6 +16,8 @@
 
 package org.gradle.api.problems.internal;
 
+import org.gradle.api.problems.AdditionalDataBuilder;
+
 import javax.annotation.Nullable;
 
 public class DefaultPropertyTraceData implements PropertyTraceData {
@@ -30,10 +32,6 @@ public class DefaultPropertyTraceData implements PropertyTraceData {
             return new DefaultPropertyTraceDataBuilder();
         }
         return new DefaultPropertyTraceDataBuilder(from);
-    }
-
-    public static AdditionalDataBuilder<PropertyTraceData> builder() {
-        return new DefaultPropertyTraceDataBuilder();
     }
 
     @Override
