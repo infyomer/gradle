@@ -14,20 +14,20 @@
  * limitations under the License.
  */
 
-package org.gradle.api.problems.internal;
+package org.gradle.launcher.daemon.protocol;
 
-import org.gradle.api.problems.AdditionalData;
+import org.gradle.api.NonNullApi;
+import org.gradle.tooling.internal.provider.serialization.SerializedPayload;
 
-import java.util.Map;
+@NonNullApi
+public class AdditionalDataPlaceHolder {
+    private final SerializedPayload data;
 
-/**
- * General additional data type that can be used to attach arbitrary data to a problem with a string map.
- */
-public interface GeneralData extends AdditionalData {
+    public AdditionalDataPlaceHolder(SerializedPayload data) {
+        this.data = data;
+    }
 
-    /**
-     * Returns the data as a map.
-     */
-    Map<String, String> getAsMap();
-
+    public SerializedPayload getData() {
+        return data;
+    }
 }
