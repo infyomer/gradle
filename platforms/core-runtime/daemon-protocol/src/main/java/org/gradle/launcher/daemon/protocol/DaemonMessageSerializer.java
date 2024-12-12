@@ -17,6 +17,7 @@
 package org.gradle.launcher.daemon.protocol;
 
 import org.gradle.api.logging.LogLevel;
+import org.gradle.api.problems.AdditionalData;
 import org.gradle.configuration.GradleLauncherMetaData;
 import org.gradle.internal.classpath.ClassPath;
 import org.gradle.internal.classpath.DefaultClassPath;
@@ -64,6 +65,8 @@ import org.gradle.launcher.exec.BuildActionParameters;
 import org.gradle.launcher.exec.BuildActionResult;
 import org.gradle.launcher.exec.DefaultBuildActionParameters;
 import org.gradle.tooling.internal.provider.serialization.PayloadSerializer;
+import org.gradle.tooling.internal.provider.serialization.ReplacingObjectInputStream;
+import org.gradle.tooling.internal.provider.serialization.ReplacingObjectOutputStream;
 import org.gradle.tooling.internal.provider.serialization.SerializedPayload;
 import org.gradle.tooling.internal.provider.serialization.SerializedPayloadSerializer;
 
@@ -209,27 +212,20 @@ public class DaemonMessageSerializer {
     private static class BuildEventSerializer implements Serializer<BuildEvent> {
 
         private final Serializer<Object> serializer;
-        @SuppressWarnings("unused")
-        private final PayloadSerializer pls;
 
         public BuildEventSerializer(PayloadSerializer pls) {
-            this.pls = pls;
             serializer = new DefaultSerializer<>(
-                outputStream -> new AdditionalDataReplacingObjectOutputStream(outputStream, pls),
-                inputStream -> new AdditionalDataReplacingObjectInputStream(inputStream, pls));
+                outputStream -> new ReplacingObjectOutputStream(outputStream, pls, AdditionalData.class),
+                inputStream -> new ReplacingObjectInputStream(inputStream, pls));
         }
 
         @Override
         public void write(Encoder encoder, BuildEvent buildEvent) throws Exception {
-//            SerializedPayload serializedPayload = pls.serialize(buildEvent.getPayload());
-//            serializer.write(encoder, serializedPayload);
             serializer.write(encoder, buildEvent.getPayload());
         }
 
         @Override
         public BuildEvent read(Decoder decoder) throws Exception {
-//            SerializedPayload read = (SerializedPayload) serializer.read(decoder);
-//            return new BuildEvent(pls.deserialize(read));
             Object read = serializer.read(decoder);
             return new BuildEvent(read);
         }

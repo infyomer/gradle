@@ -14,10 +14,9 @@
  * limitations under the License.
  */
 
-package org.gradle.launcher.daemon.protocol;
+package org.gradle.tooling.internal.provider.serialization;
 
 import org.gradle.api.NonNullApi;
-import org.gradle.tooling.internal.provider.serialization.PayloadSerializer;
 
 import javax.annotation.Nullable;
 import java.io.IOException;
@@ -25,10 +24,10 @@ import java.io.InputStream;
 import java.io.ObjectInputStream;
 
 @NonNullApi
-public class AdditionalDataReplacingObjectInputStream extends ObjectInputStream {
+public class ReplacingObjectInputStream extends ObjectInputStream {
     private final PayloadSerializer payloadSerializer;
 
-    public AdditionalDataReplacingObjectInputStream(InputStream inputSteam, PayloadSerializer payloadSerializer) throws IOException {
+    public ReplacingObjectInputStream(InputStream inputSteam, PayloadSerializer payloadSerializer) throws IOException {
         super(inputSteam);
         this.payloadSerializer = payloadSerializer;
         enableResolveObject(true);
@@ -37,8 +36,8 @@ public class AdditionalDataReplacingObjectInputStream extends ObjectInputStream 
     @Override
     @Nullable
     protected final Object resolveObject(Object obj) {
-        if (obj instanceof AdditionalDataPlaceHolder) {
-            return payloadSerializer.deserialize(((AdditionalDataPlaceHolder) obj).getData());
+        if (obj instanceof StreamDataPlaceHolder) {
+            return payloadSerializer.deserialize(((StreamDataPlaceHolder) obj).getData());
         }
         return obj;
     }

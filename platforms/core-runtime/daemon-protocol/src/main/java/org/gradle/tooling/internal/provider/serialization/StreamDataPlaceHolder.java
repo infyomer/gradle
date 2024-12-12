@@ -14,18 +14,17 @@
  * limitations under the License.
  */
 
-package org.gradle.launcher.daemon.protocol;
+package org.gradle.tooling.internal.provider.serialization;
 
 import org.gradle.api.NonNullApi;
-import org.gradle.tooling.internal.provider.serialization.SerializedPayload;
 
 import java.io.Serializable;
 
 @NonNullApi
-public class AdditionalDataPlaceHolder implements Serializable {
+public class StreamDataPlaceHolder implements Serializable {
     private final SerializedPayload data;
 
-    public AdditionalDataPlaceHolder(SerializedPayload data) {
+    public StreamDataPlaceHolder(SerializedPayload data) {
         this.data = data;
     }
 

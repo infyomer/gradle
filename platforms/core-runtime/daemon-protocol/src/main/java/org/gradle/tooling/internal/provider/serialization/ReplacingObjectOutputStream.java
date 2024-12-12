@@ -14,31 +14,36 @@
  * limitations under the License.
  */
 
-package org.gradle.launcher.daemon.protocol;
+package org.gradle.tooling.internal.provider.serialization;
 
 import org.gradle.api.NonNullApi;
-import org.gradle.api.problems.AdditionalData;
-import org.gradle.tooling.internal.provider.serialization.PayloadSerializer;
 
 import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
+import java.util.Arrays;
 
 @NonNullApi
-public class AdditionalDataReplacingObjectOutputStream extends ObjectOutputStream {
+public class ReplacingObjectOutputStream extends ObjectOutputStream {
     private final PayloadSerializer payloadSerializer;
+    private final Class<?>[] classes;
 
-    public AdditionalDataReplacingObjectOutputStream(OutputStream outputStream, PayloadSerializer payloadSerializer) throws IOException {
+    public ReplacingObjectOutputStream(OutputStream outputStream, PayloadSerializer payloadSerializer, Class<?>... classes) throws IOException {
         super(outputStream);
         this.payloadSerializer = payloadSerializer;
+        this.classes = classes;
         enableReplaceObject(true);
     }
 
     @Override
     protected final Object replaceObject(Object obj) throws IOException {
-        if (obj instanceof AdditionalData) {
-            return new AdditionalDataPlaceHolder(payloadSerializer.serialize(obj));
+        if (isReplaceable(obj)) {
+            return new StreamDataPlaceHolder(payloadSerializer.serialize(obj));
         }
         return obj;
+    }
+
+    private boolean isReplaceable(Object obj) {
+        return Arrays.stream(classes).anyMatch(clazz -> clazz.isInstance(obj));
     }
 }
