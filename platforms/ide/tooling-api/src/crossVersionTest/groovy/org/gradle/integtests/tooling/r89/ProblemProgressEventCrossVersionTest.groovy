@@ -79,7 +79,6 @@ class ProblemProgressEventCrossVersionTest extends ToolingApiSpecification {
                 .addProgressListener(listener)
                 .setStandardError(System.err)
                 .setStandardOutput(System.out)
-//                .addJvmArguments("-agentlib:jdwp=transport=dt_socket,server=n,suspend=y,address=5006")
                 .addArguments("--info")
                 .run()
         }
@@ -229,6 +228,68 @@ class ProblemProgressEventCrossVersionTest extends ToolingApiSpecification {
             jdk17,
             jdk21
         ]
+    }
+
+
+    def "Property validation failure should produce problem report with domain-specific additional data"() {
+        setup:
+        file('buildSrc/src/main/java/MyTask.java') << '''
+            import org.gradle.api.*;
+            import org.gradle.api.tasks.*;
+            import org.gradle.work.*;
+            @DisableCachingByDefault(because = "test task")
+            public class MyTask extends DefaultTask {
+                @Optional @Input
+                boolean getPrimitive() {
+                    return true;
+                }
+                @TaskAction public void execute() {}
+            }
+        '''
+        buildFile << '''
+            tasks.register('myTask', MyTask)
+        '''
+
+        when:
+        def listener = new ProblemProgressListener()
+        withConnection { connection ->
+            connection.newBuild()
+                .forTasks("myTask")
+                .addProgressListener(listener)
+                .setStandardError(System.err)
+                .setStandardOutput(System.out)
+                .addArguments("--info")
+
+                .run()
+        }
+
+        then:
+        thrown(BuildException)
+        listener.problems.size() == 1
+        (listener.problems[0].additionalData).asMap['typeName'] == 'MyTask'
+    }
+
+    @TargetGradleVersion("=8.6")
+    def "8.6 version doesn't send failure"() {
+        buildFile """
+            tasks.register("foo) {
+        """
+
+        given:
+        def listener = new ProblemProgressListener()
+
+        when:
+        withConnection {
+            it.model(CustomModel)
+                .addProgressListener(listener)
+                .get()
+        }
+
+        then:
+        thrown(BuildException)
+        def problems = listener.problems
+        validateCompilationProblem(problems, buildFile)
+        failureMessage(problems[0].failure) == null
     }
 
     static void validateCompilationProblem(List<SingleProblemEvent> problems, TestFile buildFile) {

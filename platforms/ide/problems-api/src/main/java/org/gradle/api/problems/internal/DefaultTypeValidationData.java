@@ -81,33 +81,6 @@ public class DefaultTypeValidationData implements TypeValidationData, Serializab
         return new DefaultTypeValidationDataBuilder(from);
     }
 
-//    @Override
-//    public Map<String, Object> getAsMap() {
-//        ImmutableMap.Builder<String, Object> builder = ImmutableMap.builder();
-//        if (pluginId != null) {
-//            builder.put("pluginId", pluginId);
-//        }
-//        if (propertyName != null) {
-//            builder.put("propertyName", propertyName);
-//        }
-//        if (functionName != null) {
-//            builder.put("functionName", functionName);
-//        }
-//        if (parentPropertyName != null) {
-//            builder.put("parentPropertyName", parentPropertyName);
-//        }
-//        if (typeName != null) {
-//            builder.put("typeName", typeName);
-//        }
-//        return builder.build();
-//    }
-//
-//    @Nullable
-//    @Override
-//    public Object get() {
-//        return this;
-//    }
-
     private static class DefaultTypeValidationDataBuilder implements TypeValidationDataSpec, AdditionalDataBuilder<TypeValidationData> {
 
         @Nullable

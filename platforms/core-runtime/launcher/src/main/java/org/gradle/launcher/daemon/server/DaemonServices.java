@@ -189,8 +189,6 @@ public class DaemonServices implements ServiceRegistrationProvider {
         return BuildActionSerializer.create();
     }
 
-
-    //    @SuppressWarnings("unusedVariable")
     @Provides
     protected Daemon createDaemon(
         ImmutableList<DaemonCommandAction> actions,
@@ -200,8 +198,6 @@ public class DaemonServices implements ServiceRegistrationProvider {
         DaemonRegistry daemonRegistry,
         DaemonContext daemonContext,
         ListenerManager listenerManager
-
-//        ,ClassLoaderCache classLoaderCache, PayloadClassLoaderFactory classLoaderFactory
     ) {
         ClassLoaderCache classLoaderCache = new ClassLoaderCache();
         PayloadSerializer pls = new PayloadSerializer(
@@ -223,14 +219,4 @@ public class DaemonServices implements ServiceRegistrationProvider {
             listenerManager
         );
     }
-
-//    PayloadSerializer getPayloadSerializer(ClassLoaderCache classLoaderCache, PayloadClassLoaderFactory classLoaderFactory) {
-//        return new PayloadSerializer(
-//            new WellKnownClassLoaderRegistry(
-//                new DefaultPayloadClassLoaderRegistry(
-//                    classLoaderCache,
-//                    classLoaderFactory))
-//        );
-//    }
-
 }

@@ -192,6 +192,8 @@ class ProblemProgressEventCrossVersionTest extends ToolingApiSpecification {
                         it.id("id", "shortProblemMessage")
                         .lineInFileLocation("/tmp/foo", 1, 2, 3)
                         .additionalData(SomeDataSpec, data -> data.typeName("typeName"))
+                        $detailsConfig
+                        $documentationConfig
                         .severity(Severity.WARNING)
                         .solution("try this instead")
                     }
@@ -238,7 +240,7 @@ class ProblemProgressEventCrossVersionTest extends ToolingApiSpecification {
 
         where:
         detailsConfig | expectedDetails | documentationConfig | expectedDocumentation
-//        '.details("long message")' | "long message"  | '.documentedAt("https://docs.example.org")' | 'https://docs.example.org'
+        '.details("long message")' | "long message" | '.documentedAt("https://docs.example.org")' | 'https://docs.example.org'
         ''            | null            | ''                  | null
     }
 
