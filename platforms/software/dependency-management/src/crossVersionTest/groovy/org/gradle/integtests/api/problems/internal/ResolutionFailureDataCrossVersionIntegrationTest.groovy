@@ -47,9 +47,9 @@ class ResolutionFailureDataCrossVersionIntegrationTest extends ToolingApiSpecifi
         """
 
         when:
-        List<DefaultAdditionalData> failureData = runAndGetProblems()
+        def failureData = runAndGetProblems()
             .findAll { it instanceof SingleProblemEvent }
-            .collect { ProblemEvent problem -> problem.additionalData as DefaultAdditionalData }
+            .collect { ProblemEvent problem -> problem.additionalData }
 
         then:
         failureData.size() >= 1 // Depending on Java version, we might get a Java version test execution failure first, so just check the last one
