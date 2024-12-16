@@ -16,11 +16,9 @@
 
 package org.gradle.api.problems.internal;
 
-import org.gradle.api.problems.AdditionalDataSpec;
-
 /**
  * Specifies configuration options when creating a new DeprecationData instance.
  */
-public interface DeprecationDataSpec extends AdditionalDataSpec {
+public interface DeprecationDataSpec {
     DeprecationDataSpec type(DeprecationData.Type type);
 }

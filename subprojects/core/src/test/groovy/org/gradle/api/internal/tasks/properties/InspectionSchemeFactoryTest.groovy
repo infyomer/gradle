@@ -23,7 +23,6 @@ import org.gradle.internal.instantiation.InstantiationScheme
 import org.gradle.internal.properties.annotations.PropertyAnnotationHandler
 import org.gradle.internal.reflect.DefaultTypeValidationContext
 import org.gradle.internal.reflect.annotations.impl.DefaultTypeAnnotationMetadataStore
-import org.gradle.util.TestUtil
 import spock.lang.Specification
 
 import javax.inject.Inject
@@ -63,7 +62,7 @@ class InspectionSchemeFactoryTest extends Specification {
         metadata.propertiesMetadata.size() == 2
 
         when:
-        def validationContext = DefaultTypeValidationContext.withoutRootType(false, TestUtil.problemsService())
+        def validationContext = DefaultTypeValidationContext.withoutRootType(false)
         metadata.visitValidationFailures(null, validationContext)
 
         then:
@@ -89,7 +88,7 @@ class InspectionSchemeFactoryTest extends Specification {
         metadata.propertiesMetadata.size() == 2
 
         when:
-        def validationContext = DefaultTypeValidationContext.withoutRootType(false, TestUtil.problemsService())
+        def validationContext = DefaultTypeValidationContext.withoutRootType(false)
         metadata.visitValidationFailures(null, validationContext)
 
         then:

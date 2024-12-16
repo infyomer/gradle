@@ -16,8 +16,6 @@
 
 package org.gradle.api.problems.internal;
 
-import org.gradle.api.problems.AdditionalDataBuilder;
-
 import javax.annotation.Nullable;
 import java.io.Serializable;
 
@@ -72,72 +70,5 @@ public class DefaultTypeValidationData implements TypeValidationData, Serializab
     @Nullable
     public String getTypeName() {
         return typeName;
-    }
-
-    public static AdditionalDataBuilder<TypeValidationData> builder(@Nullable TypeValidationData from) {
-        if (from == null) {
-            return new DefaultTypeValidationDataBuilder();
-        }
-        return new DefaultTypeValidationDataBuilder(from);
-    }
-
-    private static class DefaultTypeValidationDataBuilder implements TypeValidationDataSpec, AdditionalDataBuilder<TypeValidationData> {
-
-        @Nullable
-        private String pluginId;
-        @Nullable
-        private String propertyName;
-        @Nullable
-        private String functionName;
-        @Nullable
-        private String parentPropertyName;
-        @Nullable
-        private String typeName;
-
-        public DefaultTypeValidationDataBuilder() {
-        }
-
-        public DefaultTypeValidationDataBuilder(TypeValidationData from) {
-            this.pluginId = from.getPluginId();
-            this.propertyName = from.getPropertyName();
-            this.functionName = from.getFunctionName();
-            this.parentPropertyName = from.getParentPropertyName();
-            this.typeName = from.getTypeName();
-        }
-
-        @Override
-        public DefaultTypeValidationData build() {
-            return new DefaultTypeValidationData(pluginId, propertyName, functionName, parentPropertyName, typeName);
-        }
-
-        @Override
-        public TypeValidationDataSpec pluginId(String pluginId) {
-            this.pluginId = pluginId;
-            return this;
-        }
-
-        @Override
-        public TypeValidationDataSpec propertyName(String propertyName) {
-            this.propertyName = propertyName;
-            return this;
-        }
-
-        @Override
-        public TypeValidationDataSpec functionName(String functionName) {
-            this.functionName = functionName;
-            return this;
-        }
-
-        @Override
-        public TypeValidationDataSpec parentPropertyName(String parentPropertyName) {
-            this.parentPropertyName = parentPropertyName;
-            return this;
-        }
-
-        @Override
-        public TypeValidationDataSpec typeName(String typeName) {
-            this.typeName = typeName;
-            return this;
-        }
     }
 }

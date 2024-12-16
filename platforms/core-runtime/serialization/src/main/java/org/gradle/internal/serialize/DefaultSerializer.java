@@ -33,8 +33,8 @@ public class DefaultSerializer<T> extends AbstractSerializer<T> {
     }
 
     private ClassLoader classLoader;
-    private StreamFactory<OutputStream, ObjectOutputStream> objectOutputStreamFactory;
-    private StreamFactory<InputStream, ObjectInputStream> inputStreamStreamFactory;
+    private final StreamFactory<OutputStream, ObjectOutputStream> objectOutputStreamFactory;
+    private final StreamFactory<InputStream, ObjectInputStream> inputStreamStreamFactory;
 
     public DefaultSerializer(StreamFactory<OutputStream, ObjectOutputStream> objectOutputStreamFactory, StreamFactory<InputStream, ObjectInputStream> inputStreamStreamFactory) {
         this.classLoader = getClass().getClassLoader();

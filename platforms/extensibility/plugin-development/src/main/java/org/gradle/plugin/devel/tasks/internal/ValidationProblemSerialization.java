@@ -613,7 +613,7 @@ public class ValidationProblemSerialization {
         public static final String GENERAL_DATA_DATA = "data";
 
         @Override
-        public void write(JsonWriter out, AdditionalData value) throws IOException {
+        public void write(JsonWriter out, @Nullable AdditionalData value) throws IOException {
             if (value == null) {
                 out.nullValue();
                 return;

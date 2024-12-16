@@ -99,6 +99,10 @@ class ProblemProgressEventCrossVersionTest extends ToolingApiSpecification {
         }
     }
 
+    def getGeneralDataString() {
+        targetVersion < GradleVersion.version("8.13") ? "org.gradle.api.problems.internal.GeneralDataSpec, data -> data.put('aKey', 'aValue')" : "new org.gradle.api.problems.internal.DefaultGeneralData(['aKey': 'aValue'])"
+    }
+
     def "Problems expose details via Tooling API events with failure"() {
         given:
         withReportProblemTask """
@@ -107,7 +111,7 @@ class ProblemProgressEventCrossVersionTest extends ToolingApiSpecification {
                 $documentationConfig
                 .lineInFileLocation("/tmp/foo", 1, 2, 3)
                 $detailsConfig
-                .additionalData(org.gradle.api.problems.internal.GeneralDataSpec, data -> data.put("aKey", "aValue"))
+                .additionalData(${getGeneralDataString()})
                 .severity(Severity.WARNING)
                 .solution("try this instead")
             }
@@ -146,7 +150,7 @@ class ProblemProgressEventCrossVersionTest extends ToolingApiSpecification {
                 $documentationConfig
                 .lineInFileLocation("/tmp/foo", 1, 2, 3)
                 $detailsConfig
-                .additionalData(org.gradle.api.problems.internal.GeneralDataSpec, data -> data.put("aKey", "aValue"))
+                .additionalData(${getGeneralDataString()})
                 .severity(Severity.WARNING)
                 .solution("try this instead")
             }

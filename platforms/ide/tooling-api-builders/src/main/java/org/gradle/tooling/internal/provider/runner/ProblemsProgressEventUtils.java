@@ -18,7 +18,6 @@ package org.gradle.tooling.internal.provider.runner;
 
 import com.google.common.collect.ImmutableMap;
 import org.gradle.api.NonNullApi;
-import org.gradle.api.problems.AdditionalData;
 import org.gradle.api.problems.ProblemGroup;
 import org.gradle.api.problems.ProblemId;
 import org.gradle.api.problems.Severity;
@@ -70,6 +69,7 @@ import org.gradle.tooling.internal.protocol.problem.InternalSolution;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -213,7 +213,7 @@ public class ProblemsProgressEventUtils {
 
 
     @SuppressWarnings("unchecked")
-    private static InternalAdditionalData toInternalAdditionalData(@Nullable AdditionalData additionalData) {
+    private static InternalAdditionalData toInternalAdditionalData(@Nullable Serializable additionalData) {
         if (additionalData instanceof DeprecationData) {
             // For now, we only expose deprecation data to the tooling API with generic additional data
             DeprecationData data = (DeprecationData) additionalData;

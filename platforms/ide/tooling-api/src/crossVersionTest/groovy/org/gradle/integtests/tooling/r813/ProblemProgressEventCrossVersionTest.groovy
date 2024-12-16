@@ -60,6 +60,10 @@ class ProblemProgressEventCrossVersionTest extends ToolingApiSpecification {
         return listener.problems
     }
 
+    def getGeneralDataString() {
+        targetVersion < GradleVersion.version("8.13") ? "org.gradle.api.problems.internal.GeneralDataSpec, data -> data.put('aKey', 'aValue')" : "new org.gradle.api.problems.internal.DefaultGeneralData(['aKey': 'aValue'])"
+    }
+
     def "Problems expose details via Tooling API events with failure"() {
         given:
         withReportProblemTask """
@@ -68,7 +72,7 @@ class ProblemProgressEventCrossVersionTest extends ToolingApiSpecification {
                 $documentationConfig
                 .lineInFileLocation("/tmp/foo", 1, 2, 3)
                 $detailsConfig
-                .additionalData(org.gradle.api.problems.internal.GeneralDataSpec, data -> data.put("aKey", "aValue"))
+                .additionalData(${getGeneralDataString()})
                 .severity(Severity.WARNING)
                 .solution("try this instead")
             }
@@ -106,7 +110,7 @@ class ProblemProgressEventCrossVersionTest extends ToolingApiSpecification {
                 $documentationConfig
                 .lineInFileLocation("/tmp/foo", 1, 2, 3)
                 $detailsConfig
-                .additionalData(org.gradle.api.problems.internal.GeneralDataSpec, data -> data.put("aKey", "aValue"))
+                .additionalData(${getGeneralDataString()})
                 .severity(Severity.WARNING)
                 .solution("try this instead")
             }
@@ -141,45 +145,12 @@ class ProblemProgressEventCrossVersionTest extends ToolingApiSpecification {
         buildFile """
             import org.gradle.api.problems.Severity
 
-            class SomeData implements AdditionalData, Serializable {
+            class SomeData implements AdditionalData {
                 String typeName
 
                 SomeData(String typeName) {
                     this.typeName = typeName
                 }
-
-                static AdditionalDataBuilder<SomeData> builder(SomeData from) {
-                    if(from == null) {
-                        return new SomeDataBuilder()
-                    }
-                    return new SomeDataBuilder(from)
-                }
-
-                private static class SomeDataBuilder implements SomeDataSpec, AdditionalDataBuilder<SomeData> {
-                    private String typeName
-
-                    SomeDataBuilder(SomeData from) {
-                        this.typeName = from.getTypeName()
-                    }
-
-                    SomeDataBuilder() {
-                    }
-
-                    @Override
-                    SomeDataSpec typeName(String typeName){
-                        this.typeName = typeName
-                        return this
-                    }
-
-                    @Override
-                    SomeData build() {
-                        return new SomeData(typeName)
-                    }
-                }
-            }
-
-            interface SomeDataSpec extends AdditionalDataSpec {
-                SomeDataSpec typeName(String typeName);
             }
 
             abstract class ProblemReportingTask extends DefaultTask {
@@ -191,7 +162,7 @@ class ProblemProgressEventCrossVersionTest extends ToolingApiSpecification {
                     getProblems().getReporter().reporting {
                         it.id("id", "shortProblemMessage")
                         .lineInFileLocation("/tmp/foo", 1, 2, 3)
-                        .additionalData(SomeDataSpec, data -> data.typeName("typeName"))
+                        .additionalData(new SomeData("typeName"))
                         $detailsConfig
                         $documentationConfig
                         .severity(Severity.WARNING)
@@ -201,13 +172,7 @@ class ProblemProgressEventCrossVersionTest extends ToolingApiSpecification {
             }
 
             abstract class MyPlugin implements Plugin<Project> {
-                @Inject
-                protected abstract Problems getProblems();
-
                 void apply(Project project) {
-                    getProblems().getAdditionalDataBuilderFactory().registerAdditionalDataProvider(SomeDataSpec, data -> {
-                        return SomeData.builder(data)
-                    })
                     project.tasks.register("reportProblem", ProblemReportingTask)
                 }
             }

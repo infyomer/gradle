@@ -18,7 +18,6 @@ package org.gradle.integtests.fixtures.problems
 
 import groovy.transform.CompileStatic
 import org.gradle.api.problems.AdditionalData
-import org.gradle.api.problems.AdditionalDataBuilderFactory
 import org.gradle.api.problems.ProblemGroup
 import org.gradle.api.problems.ProblemId
 import org.gradle.api.problems.Severity
@@ -146,7 +145,7 @@ class ReceivedProblem implements Problem {
     }
 
     @Override
-    ReceivedAdditionalData getAdditionalData() {
+    AdditionalData getAdditionalData() {
        additionalData
     }
 
@@ -156,7 +155,7 @@ class ReceivedProblem implements Problem {
     }
 
     @Override
-    InternalProblemBuilder toBuilder(AdditionalDataBuilderFactory additionalDataBuilderFactory) {
+    InternalProblemBuilder toBuilder() {
         throw new UnsupportedOperationException("Not implemented")
     }
 

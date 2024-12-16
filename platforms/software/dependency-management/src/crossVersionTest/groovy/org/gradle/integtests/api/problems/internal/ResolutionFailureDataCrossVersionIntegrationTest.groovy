@@ -25,7 +25,7 @@ import org.gradle.tooling.events.ProgressEvent
 import org.gradle.tooling.events.ProgressListener
 import org.gradle.tooling.events.problems.ProblemEvent
 import org.gradle.tooling.events.problems.SingleProblemEvent
-import org.gradle.tooling.events.problems.internal.DefaultAdditionalData
+import org.gradle.util.GradleVersion
 
 /**
  * Tests that the tooling API can receive and process a problem containing additional {@link ResolutionFailureData}
@@ -42,7 +42,7 @@ class ResolutionFailureDataCrossVersionIntegrationTest extends ToolingApiSpecifi
 
             getProblems().getReporter().reporting {
                 it.id("id", "shortProblemMessage")
-                .additionalData(ResolutionFailureDataSpec.class, data -> data.from(failure))
+                .additionalData(new org.gradle.api.problems.internal.DefaultResolutionFailureData(failure))
             }
         """
 
@@ -61,20 +61,20 @@ class ResolutionFailureDataCrossVersionIntegrationTest extends ToolingApiSpecifi
     }
 
     @ToolingApiVersion(">=8.13")
-    def "can supply ResolutionFailureData (Tooling API client >= 8.12)"() {
+    def "can supply ResolutionFailureData (Tooling API client >= 8.13)"() {
         given:
         withReportProblemTask """
             TestResolutionFailure failure = new TestResolutionFailure()
 
             getProblems().getReporter().reporting {
                 it.id("id", "shortProblemMessage")
-                .additionalData(ResolutionFailureDataSpec.class, data -> data.from(failure))
+                .additionalData(${targetVersion < GradleVersion.version("8.13") ? "ResolutionFailureDataSpec.class, data -> data.from(failure)" : "new org.gradle.api.problems.internal.DefaultResolutionFailureData(failure)"})
             }
         """
 
         when:
-        List<DefaultAdditionalData> failureData = runAndGetProblems().collect { ProblemEvent event ->
-            event.problem.additionalData as DefaultAdditionalData
+        def failureData = runAndGetProblems().collect { ProblemEvent event ->
+            event.problem.additionalData
         }
 
         then:

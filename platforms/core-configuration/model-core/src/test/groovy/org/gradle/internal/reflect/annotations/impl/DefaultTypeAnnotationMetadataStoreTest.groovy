@@ -26,7 +26,6 @@ import org.gradle.internal.reflect.DefaultTypeValidationContext
 import org.gradle.internal.reflect.annotations.AnnotationCategory
 import org.gradle.internal.reflect.validation.TypeValidationProblemRenderer
 import org.gradle.internal.reflect.validation.ValidationMessageChecker
-import org.gradle.util.TestUtil
 import spock.lang.Issue
 import spock.lang.Specification
 
@@ -1029,7 +1028,7 @@ class DefaultTypeAnnotationMetadataStoreTest extends Specification implements Va
             }
         }
 
-        def validationContext = DefaultTypeValidationContext.withoutRootType(false, TestUtil.problemsService())
+        def validationContext = DefaultTypeValidationContext.withoutRootType(false)
         metadata.visitValidationFailures(validationContext)
         List<String> actualErrors = validationContext.problems
             .collect({ (normaliseLineSeparators(TypeValidationProblemRenderer.renderMinimalInformationAbout(it)) + (it.definition.severity == Severity.ERROR ? " [STRICT]" : "") as String) })
@@ -1064,7 +1063,7 @@ class DefaultTypeAnnotationMetadataStoreTest extends Specification implements Va
             }
         }
 
-        def validationContext = DefaultTypeValidationContext.withoutRootType(false, TestUtil.problemsService())
+        def validationContext = DefaultTypeValidationContext.withoutRootType(false)
         metadata.visitValidationFailures(validationContext)
         List<String> actualErrors = validationContext.problems
             .collect({ (normaliseLineSeparators(TypeValidationProblemRenderer.renderMinimalInformationAbout(it)) + (it.definition.severity == Severity.ERROR ? " [STRICT]" : "") as String) })
