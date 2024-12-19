@@ -204,9 +204,118 @@ class ProblemProgressEventCrossVersionTest extends ToolingApiSpecification {
         }
 
         where:
-        detailsConfig | expectedDetails | documentationConfig | expectedDocumentation
-        '.details("long message")' | "long message" | '.documentedAt("https://docs.example.org")' | 'https://docs.example.org'
-        ''            | null            | ''                  | null
+        detailsConfig              | expectedDetails | documentationConfig                         | expectedDocumentation
+        '.details("long message")' | "long message"  | '.documentedAt("https://docs.example.org")' | 'https://docs.example.org'
+        ''                         | null            | ''                                          | null
+    }
+
+    @TargetGradleVersion(">=8.13")
+    def "can handle invalid and null additional data"() {
+        given:
+        buildFile """
+            import org.gradle.api.problems.Severity
+
+            class InvalidData implements AdditionalData {
+                Object invalidNonSerializeableMember = new Object()
+            }
+
+            abstract class ProblemReportingTask extends DefaultTask {
+                @Inject
+                protected abstract Problems getProblems();
+
+                @TaskAction
+                void run() {
+                    getProblems().getReporter().reporting {
+                        it.id("id", "shortProblemMessage")
+                        .lineInFileLocation("/tmp/foo", 1, 2, 3)
+                        .additionalData($inputData)
+                        .details("long message")
+                        .documentedAt("https://docs.example.org")
+                        .severity(Severity.WARNING)
+                        .solution("try this instead")
+                    }
+                }
+            }
+
+            abstract class MyPlugin implements Plugin<Project> {
+                void apply(Project project) {
+                    project.tasks.register("reportProblem", ProblemReportingTask)
+                }
+            }
+
+            apply(plugin: MyPlugin)
+       """
+        when:
+
+        def listener = new ProblemProgressListener()
+        withConnection { connection ->
+            connection.newBuild().forTasks('reportProblem')
+                .addProgressListener(listener)
+                .run()
+        }
+        def problems = listener.problems
+
+        then:
+        problems.size() == 1
+        verifyAll(problems[0]) {
+            additionalData.get(SomeData) == null
+            details?.details == "long message"
+            definition.documentationLink?.url == 'https://docs.example.org'
+            originLocations.size() >= 2
+            (originLocations[0] as LineInFileLocation).path == '/tmp/foo'
+            (originLocations[1] as LineInFileLocation).path == "build file '$buildFile.path'"
+            definition.severity == Severity.WARNING
+            solutions.size() == 1
+            solutions[0].solution == 'try this instead'
+        }
+
+        where:
+        inputData << ['null', 'new InvalidData()']
+    }
+
+    @TargetGradleVersion(">=8.13")
+    def "doesn't compile with invalid base type"() {
+        given:
+        buildFile """
+            import org.gradle.api.problems.Severity
+
+            abstract class ProblemReportingTask extends DefaultTask {
+                @Inject
+                protected abstract Problems getProblems();
+
+                @TaskAction
+                void run() {
+                    getProblems().getReporter().reporting {
+                        it.id("id", "shortProblemMessage")
+                        .lineInFileLocation("/tmp/foo", 1, 2, 3)
+                        .additionalData(new Object())
+                        .details("long message")
+                        .documentedAt("https://docs.example.org")
+                        .severity(Severity.WARNING)
+                        .solution("try this instead")
+                    }
+                }
+            }
+
+            abstract class MyPlugin implements Plugin<Project> {
+                void apply(Project project) {
+                    project.tasks.register("reportProblem", ProblemReportingTask)
+                }
+            }
+
+            apply(plugin: MyPlugin)
+       """
+        when:
+
+        def listener = new ProblemProgressListener()
+        withConnection { connection ->
+            connection.newBuild().forTasks('reportProblem')
+                .addProgressListener(listener)
+                .run()
+        }
+
+        then:
+        thrown(BuildException)
     }
 
     def "Can serialize groovy compilation error"() {

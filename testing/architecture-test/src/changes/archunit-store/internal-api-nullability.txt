@@ -4808,7 +4808,6 @@ Class <org.gradle.tooling.internal.provider.serialization.DefaultPayloadClassLoa
 Class <org.gradle.tooling.internal.provider.serialization.DefaultPayloadClassLoaderRegistry$DetailsToClassLoaderTransformer> is not annotated (directly or via its package) with @org.gradle.api.NonNullApi in (DefaultPayloadClassLoaderRegistry.java:0)
 Class <org.gradle.tooling.internal.provider.serialization.DefaultPayloadClassLoaderRegistry> is not annotated (directly or via its package) with @org.gradle.api.NonNullApi in (DefaultPayloadClassLoaderRegistry.java:0)
 Class <org.gradle.tooling.internal.provider.serialization.DeserializeMap> is not annotated (directly or via its package) with @org.gradle.api.NonNullApi in (DeserializeMap.java:0)
-Class <org.gradle.tooling.internal.provider.serialization.ModelClassLoaderFactory> is not annotated (directly or via its package) with @org.gradle.api.NonNullApi in (ModelClassLoaderFactory.java:0)
 Class <org.gradle.tooling.internal.provider.serialization.PayloadClassLoaderFactory> is not annotated (directly or via its package) with @org.gradle.api.NonNullApi in (PayloadClassLoaderFactory.java:0)
 Class <org.gradle.tooling.internal.provider.serialization.PayloadClassLoaderRegistry> is not annotated (directly or via its package) with @org.gradle.api.NonNullApi in (PayloadClassLoaderRegistry.java:0)
 Class <org.gradle.tooling.internal.provider.serialization.PayloadSerializer> is not annotated (directly or via its package) with @org.gradle.api.NonNullApi in (PayloadSerializer.java:0)

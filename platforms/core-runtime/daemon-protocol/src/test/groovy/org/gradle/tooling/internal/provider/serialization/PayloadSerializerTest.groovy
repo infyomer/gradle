@@ -30,7 +30,7 @@ import java.lang.reflect.Proxy
 
 class PayloadSerializerTest extends AbstractClassGraphSpec {
     static PayloadSerializer createPayloadSerializer() {
-        new PayloadSerializer(new WellKnownClassLoaderRegistry(new DefaultPayloadClassLoaderRegistry(new ClassLoaderCache(), new ModelClassLoaderFactory())))
+        new PayloadSerializer(new WellKnownClassLoaderRegistry(new DefaultPayloadClassLoaderRegistry(new ClassLoaderCache(), new DefaultPayloadClassLoaderFactory())))
     }
 
     final PayloadSerializer originator = createPayloadSerializer()

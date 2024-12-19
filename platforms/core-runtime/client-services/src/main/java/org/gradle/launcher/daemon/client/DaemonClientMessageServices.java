@@ -43,11 +43,12 @@ import org.gradle.launcher.daemon.protocol.DaemonMessageSerializer;
 import org.gradle.launcher.daemon.registry.DaemonDir;
 import org.gradle.launcher.daemon.registry.DaemonRegistry;
 import org.gradle.tooling.internal.provider.serialization.ClassLoaderCache;
+import org.gradle.tooling.internal.provider.serialization.DefaultPayloadClassLoaderFactory;
 import org.gradle.tooling.internal.provider.serialization.DefaultPayloadClassLoaderRegistry;
-import org.gradle.tooling.internal.provider.serialization.ModelClassLoaderFactory;
 import org.gradle.tooling.internal.provider.serialization.PayloadSerializer;
 import org.gradle.tooling.internal.provider.serialization.WellKnownClassLoaderRegistry;
 
+import javax.annotation.Nonnull;
 import java.util.UUID;
 
 /**
@@ -103,6 +104,19 @@ public class DaemonClientMessageServices implements ServiceRegistrationProvider 
 
     @Provides
     DaemonConnector createDaemonConnector(DaemonDir daemonDir, DaemonRegistry daemonRegistry, OutgoingConnector outgoingConnector, DaemonStarter daemonStarter, ListenerManager listenerManager, ProgressLoggerFactory progressLoggerFactory, Serializer<BuildAction> buildActionSerializer) {
+        return getDaemonConnector(daemonDir, daemonRegistry, outgoingConnector, daemonStarter, listenerManager, progressLoggerFactory, buildActionSerializer);
+    }
+
+    @Nonnull
+    static DaemonConnector getDaemonConnector(
+        DaemonDir daemonDir,
+        DaemonRegistry daemonRegistry,
+        OutgoingConnector outgoingConnector,
+        DaemonStarter daemonStarter,
+        ListenerManager listenerManager,
+        ProgressLoggerFactory progressLoggerFactory,
+        Serializer<BuildAction> buildActionSerializer
+    ) {
         ClassLoaderCache classLoaderCache = new ClassLoaderCache();
         PayloadSerializer pls = new PayloadSerializer(
             new WellKnownClassLoaderRegistry(
@@ -110,7 +124,7 @@ public class DaemonClientMessageServices implements ServiceRegistrationProvider 
                     new DefaultPayloadClassLoaderRegistry(
                         classLoaderCache,
                         new ClientSidePayloadClassLoaderFactory(
-                            new ModelClassLoaderFactory())),
+                            new DefaultPayloadClassLoaderFactory())),
                     new ClasspathInferer(),
                     classLoaderCache)));
         return new DefaultDaemonConnector(

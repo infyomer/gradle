@@ -67,8 +67,8 @@ import org.gradle.launcher.daemon.server.stats.DaemonRunningStats;
 import org.gradle.launcher.exec.BuildExecutor;
 import org.gradle.tooling.internal.provider.action.BuildActionSerializer;
 import org.gradle.tooling.internal.provider.serialization.ClassLoaderCache;
+import org.gradle.tooling.internal.provider.serialization.DefaultPayloadClassLoaderFactory;
 import org.gradle.tooling.internal.provider.serialization.DefaultPayloadClassLoaderRegistry;
-import org.gradle.tooling.internal.provider.serialization.ModelClassLoaderFactory;
 import org.gradle.tooling.internal.provider.serialization.PayloadSerializer;
 import org.gradle.tooling.internal.provider.serialization.WellKnownClassLoaderRegistry;
 
@@ -204,7 +204,7 @@ public class DaemonServices implements ServiceRegistrationProvider {
             new WellKnownClassLoaderRegistry(
                 new DefaultPayloadClassLoaderRegistry(
                     classLoaderCache,
-                    new ModelClassLoaderFactory())));
+                    new DefaultPayloadClassLoaderFactory())));
 
         return new Daemon(
             new DaemonTcpServerConnector(

@@ -17,6 +17,7 @@
 package org.gradle.tooling.internal.provider.serialization;
 
 import org.gradle.TaskExecutionRequest;
+import org.gradle.api.NonNullApi;
 import org.gradle.internal.classloader.CachingClassLoader;
 import org.gradle.internal.classloader.ClassLoaderSpec;
 import org.gradle.internal.classloader.FilteringClassLoader;
@@ -26,11 +27,11 @@ import org.gradle.internal.classloader.VisitableURLClassLoader;
 
 import java.util.List;
 
-//TODO (Reinhold) rename to something more generic that covers AdditionalData as well
-public class ModelClassLoaderFactory implements PayloadClassLoaderFactory {
+@NonNullApi
+public class DefaultPayloadClassLoaderFactory implements PayloadClassLoaderFactory {
     private final ClassLoader rootClassLoader;
 
-    public ModelClassLoaderFactory() {
+    public DefaultPayloadClassLoaderFactory() {
         ClassLoader parent = getClass().getClassLoader();
         FilteringClassLoader.Spec filterSpec = new FilteringClassLoader.Spec();
         filterSpec.allowPackage("org.gradle.tooling.internal.protocol");

@@ -16,7 +16,6 @@
 
 package org.gradle.api.problems;
 
-import org.gradle.api.Action;
 import org.gradle.api.Incubating;
 import org.gradle.api.problems.internal.InternalProblemSpec;
 import org.gradle.api.problems.internal.Problem;
@@ -25,9 +24,11 @@ import java.io.Serializable;
 
 /**
  * Marker interface for additional data that can be attached to a {@link Problem}.
+ * It and all its contained Objects need to be Serializable to be able to be carried in a BuildEvent to the TAPI.
+ * We use the {@link org.gradle.tooling.internal.provider.serialization.PayloadSerializer} to serialize the event.
+ * If the serialization fails the build TAPI call will fail.
  * <p>
- * This is effectively a sealed interface that is used to restrict the types of additional data that can be attached to a problem.
- * The list interfaces supported by the problems API are:
+ * The internal list interfaces supported by the problems API are:
  * <ul>
  *     <li>{@link org.gradle.api.problems.internal.GeneralData}</li>
  *     <li>{@link org.gradle.api.problems.internal.TypeValidationData}</li>
@@ -35,7 +36,7 @@ import java.io.Serializable;
  *     <li>{@link org.gradle.api.problems.internal.PropertyTraceData}</li>
  * </ul>
  *
- * @see InternalProblemSpec#additionalData(Class, Action)
+ * @see InternalProblemSpec#additionalData(AdditionalData)
  * @since 8.13
  */
 @Incubating

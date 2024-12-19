@@ -17,7 +17,9 @@
 package org.gradle.tooling.internal.provider.serialization;
 
 import org.gradle.api.NonNullApi;
+import org.gradle.api.UncheckedIOException;
 
+import javax.annotation.Nullable;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
@@ -36,9 +38,14 @@ public class ReplacingObjectOutputStream extends ObjectOutputStream {
     }
 
     @Override
+    @Nullable
     protected final Object replaceObject(Object obj) throws IOException {
         if (isReplaceable(obj)) {
-            return new StreamDataPlaceHolder(payloadSerializer.serialize(obj));
+            try {
+                return new StreamDataPlaceHolder(payloadSerializer.serialize(obj));
+            } catch (UncheckedIOException e) {
+                return null;
+            }
         }
         return obj;
     }
